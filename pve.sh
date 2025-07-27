@@ -144,10 +144,10 @@ fi
 #fi
 
 # If there are any remaining arguments that were not processed, it's an error
-if [ -n "$@" ]; then
-    echo "[ERROR] Unrecognized arguments: $@" >&2
-    usage # Display usage and exit
-fi
+#if [ -n "$@" ]; then
+#    echo "[ERROR] Unrecognized arguments: $@" >&2
+#    usage # Display usage and exit
+#fi
 
 # Check if script is running as root
 if [ "$(id -u)" != "0" ]; then
