@@ -331,7 +331,7 @@ else
     SRC_LIST_FILE="/etc/apt/sources.list"
     BACKUP_FILE="$SRC_LIST_FILE.bak.$(date +%Y%m%d)"
     CEPH_LIST_FILE="/etc/apt/sources.list.d/ceph.list"
-    CEPH_LIST_BACKUP_FILE="$CEPH_LIST_FILE.bak.$(date +%Y%m%d)"
+    CEPH_LIST_BACKUP_FILE="/etc/apt/sources.list.d/.ceph.list.bak.$(date +%Y%m%d)"
 
     IS_CEPH_ACTIVE=false
     if [ -f "$CEPH_LIST_FILE" ]; then
