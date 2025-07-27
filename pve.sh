@@ -56,33 +56,33 @@ validate_origin() {
 
     # Perform the regex match
     if [[ "$origin_str" =~ $full_origin_regex ]]; then
-      # Extracting parts using BASH_REMATCH array (bash 3.0+)
-      # BASH_REMATCH[0] is the whole matched string
-      # BASH_REMATCH[1] is the first captured group (scheme)
-      # BASH_REMATCH[2] is the second captured group (host/IP)
-      # BASH_REMATCH[3] is the third captured group (port if present, or empty)
+        # Extracting parts using BASH_REMATCH array (bash 3.0+)
+        # BASH_REMATCH[0] is the whole matched string
+        # BASH_REMATCH[1] is the first captured group (scheme)
+        # BASH_REMATCH[2] is the second captured group (host/IP)
+        # BASH_REMATCH[3] is the third captured group (port if present, or empty)
 
-      # Basic scheme validation against common apt schemes (redundant if regex is tight, but good check)
-      local found_scheme="${BASH_REMATCH[1]}"
-      if ! echo "$found_scheme" | grep -qE "^(http|https|ftp|sftp|ssh|file|rsync)$"; then
-          echo "[ERROR] Invalid scheme '$found_scheme' detected in '$origin_str'." >&2
-          return 1
-      fi
+        # Basic scheme validation against common apt schemes (redundant if regex is tight, but good check)
+        local found_scheme="${BASH_REMATCH[1]}"
+        if ! echo "$found_scheme" | grep -qE "^(http|https|ftp|sftp|ssh|file|rsync)$"; then
+            echo "[ERROR] Invalid scheme '$found_scheme' detected in '$origin_str'." >&2
+            return 1
+        fi
 
-      # Port validation if present
-      local found_port="${BASH_REMATCH[4]}" # This depends on exact capturing groups, might need adjustment
-                                         # For this simplified regex, port will be in BASH_REMATCH[4]
-      if [ -n "$found_port" ]; then
-          if ! (( found_port >= 0 && found_port <= 65535 )); then
-              echo "[ERROR] Port '$found_port' is out of valid range (0-65535)." >&2
-              return 1
-          fi
-      fi
+        # Port validation if present
+        local found_port="${BASH_REMATCH[4]}" # This depends on exact capturing groups, might need adjustment
+                                                # For this simplified regex, port will be in BASH_REMATCH[4]
+        if [ -n "$found_port" ]; then
+            if ! (( found_port >= 0 && found_port <= 65535 )); then
+                echo "[ERROR] Port '$found_port' is out of valid range (0-65535)." >&2
+                return 1
+            fi
+        fi
 
-      return 0 # Valid ORIGIN
+        return 0 # Valid ORIGIN
     else
-      echo "[ERROR] '$origin_str' does not match the expected ORIGIN format." >&2
-      return 1 # Invalid ORIGIN
+        echo "[ERROR] '$origin_str' does not match the expected ORIGIN format." >&2
+        return 1 # Invalid ORIGIN
     fi
 }
 
@@ -107,21 +107,21 @@ eval set -- "$PARSED_ARGS"
 # Process parsed options
 while true; do
     case "$1" in
-      -o|--origin)
-        ORIGIN="$2" # Assign the argument value to ORIGIN
-        shift 2     # Shift past the option and its argument
-        ;;
-      -h|--help)
-        usage     # Call the usage function and exit
-        ;;
-      --)         # End of options marker
-        shift     # Remove the -- from the arguments
-        break     # Exit the while loop
-        ;;
-      *) # Should not happen with proper getopt usage, but good for robustness
-        echo "Internal error: Unexpected option: $1" >&2
-        exit 1
-        ;;
+        -o|--origin)
+            ORIGIN="$2" # Assign the argument value to ORIGIN
+            shift 2     # Shift past the option and its argument
+            ;;
+        -h|--help)
+            usage     # Call the usage function and exit
+            ;;
+        --)         # End of options marker
+            shift     # Remove the -- from the arguments
+            break     # Exit the while loop
+            ;;
+        *) # Should not happen with proper getopt usage, but good for robustness
+            echo "Internal error: Unexpected option: $1" >&2
+            exit 1
+            ;;
     esac
 done
 
@@ -139,9 +139,9 @@ if [ -z "$ORIGIN" ]; then
 fi
 
 # Validate the ORIGIN scheme
-if ! validate_origin "$ORIGIN"; then
-    do_exit 1
-fi
+#if ! validate_origin "$ORIGIN"; then
+#    do_exit 1
+#fi
 
 # If there are any remaining arguments that were not processed, it's an error
 if [ -n "$@" ]; then
@@ -288,7 +288,7 @@ if [ "$USE_DEB822_FORMAT" = true ]; then
     done
 
     echo "[INFO] Generating sources.list files in DEB822 format..."
-    # 1. Generate Debian base repository file (debian.sources) 
+    # 1. Generate Debian base repository file (debian.sources)
     cat > "$DEBIAN_SOURCE_FILE" << EOF
 Types: deb deb-src
 URIs: $ORIGIN/debian/
