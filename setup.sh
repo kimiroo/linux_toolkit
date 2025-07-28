@@ -27,15 +27,18 @@ echo "[INFO] Initializing keyrings..."
 sudo install -m 0755 -d /etc/apt/keyrings
 
 echo "[INFO] Setting up Docker keyrings..."
+sudo rm -f "$KEYRING_DOCKER"
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o "$KEYRING_DOCKER"
 sudo chmod 644 "$KEYRING_DOCKER"
 
 echo "[INFO] Setting up Kubernetes keyrings..."
+sudo rm -f "$KEYRING_KUBERNETES"
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | sudo gpg --dearmor -o "$KEYRING_KUBERNETES"
 sudo chmod 644 "$KEYRING_KUBERNETES"
 
 echo "[INFO] Setting up Helm keyrings..."
-curl https://baltocdn.com/helm/signing.asc | sudo gpg --dearmor -o "$KEYRING_HELM"
+sudo rm -f "$KEYRING_HELM"
+curl -fsSL https://baltocdn.com/helm/signing.asc | sudo gpg --dearmor -o "$KEYRING_HELM"
 sudo chmod 644 "$KEYRING_HELM"
 echo
 
