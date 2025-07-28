@@ -66,7 +66,7 @@ echo \
     "deb [arch=$ARCH signed-by=$KEYRING_HELM] https://baltocdn.com/helm/stable/debian/ \
     all main" | \
     sudo tee "$LISTFILE_HELM" > /dev/null
-sudo chmod 644 "$LISTFILE_KUBERNETES"
+sudo chmod 644 "$LISTFILE_HELM"
 echo
 
 ### Install Packages ###
