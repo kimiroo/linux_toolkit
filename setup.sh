@@ -52,23 +52,23 @@ sudo chmod 644 "$LISTFILE_DOCKER"
 # Ubuntu & Debian
 echo "[INFO] Setting up Kubernetes repository..."
 echo \
-    "deb [arch=$ARCH signed-by=$KEYRING_KUBERNETES] https://pkgs.k8s.io/core:/stable:/v1.33/deb/" \
-    "" | \
+    "deb [arch=$ARCH signed-by=$KEYRING_KUBERNETES] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ \
+    /" | \
     sudo tee "$LISTFILE_KUBERNETES" > /dev/null
 sudo chmod 644 "$LISTFILE_KUBERNETES"
 
 # Ubuntu & Debian
 echo "[INFO] Setting up Helm repository..."
 echo \
-    "deb [arch=$ARCH signed-by=$KEYRING_HELM] https://baltocdn.com/helm/stable/debian/" \
-    "all main" | \
+    "deb [arch=$ARCH signed-by=$KEYRING_HELM] https://baltocdn.com/helm/stable/debian/ \
+    all main" | \
     sudo tee "$LISTFILE_HELM" > /dev/null
 sudo chmod 644 "$LISTFILE_KUBERNETES"
 echo
 
 ### Install Packages ###
 echo "[INFO] Clearing APT cache..."
-sudo apt-get clear
+sudo apt-get clean
 echo
 
 echo "[INFO] Updating APT cache..."
