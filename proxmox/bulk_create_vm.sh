@@ -1,7 +1,7 @@
 #!/bin/bash
 
-TEMPLATE_ID=9100
-NODE_ID_PREFIX=1
+read -p "Template ID: " TEMPLATE_ID
+read -p "Node ID: " NODE_ID_PREFIX
 STORAGE="nvme-zfs"
 CPUS=1
 CORES=1

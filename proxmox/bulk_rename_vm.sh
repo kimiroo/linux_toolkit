@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NODE_ID_PREFIX=1
+read -p "Node ID: " NODE_ID_PREFIX
 
 if [ "$NODE_ID_PREFIX" == "1" ]; then
     qm set 101 --name rocky-master-01 --tags "k3s-master,node-01"
@@ -15,7 +15,7 @@ elif [ "$NODE_ID_PREFIX" == "2" ]; then
 elif [ "$NODE_ID_PREFIX" == "3" ]; then
     qm set 301 --name rocky-master-03 --tags "k3s-master,node-03"
     qm set 302 --name rocky-worker-05 --tags "k3s-worker,node-03"
-    qm set 303 --name rocky-docker-01 --tags "docker,node-03" --cores 2 # Special config for Docker VM
+    qm set 303 --name rocky-podman-01 --tags "podman,node-03" --cores 2 # Special config for Podman VM
 fi
 
 for vm_idx in 1 2 3

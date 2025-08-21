@@ -5,7 +5,7 @@ IMAGE_URL="https://mirror.navercorp.com/rocky/10/images/x86_64/Rocky-10-GenericC
 # Image path
 IMAGE="/var/tmp/Rocky-GenericCloud-Base.qcow2"
 # Template ID
-TEMPLATE_ID=9100
+read -p "Template ID: " TEMPLATE_ID
 # Template name
 TEMPLATE_NAME=Rocky-10.0-Template
 # Disk size
@@ -19,11 +19,17 @@ CORES=1
 # Storage pool
 STORAGE=local-zfs
 # Cloud Init user
-USER=user
+read -p "User: " USER
 # Cloud Init user password
-PASSWORD="yourPASSword!"
+read -sp "Password: " PASSWORD
+read -sp "Confirm password: " PASSWORD_CHK
 # SSH Public key
-PUB_KEY="ssh-ed25519 yourPUBLICkey user@host"
+read -p "Public key: " PUB_KEY
+
+if [ "$PASSWORD" != "$PASSWORD_CHK" ]; then
+    echo "Passwords do not match. Exiting."
+    exit 1
+fi
 
 
 # --- Step 1: Download and customize the cloud image ---
