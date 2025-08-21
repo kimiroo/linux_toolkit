@@ -41,7 +41,7 @@ SETTINGS["PubkeyAuthentication"]="yes"
 SETTINGS["PasswordAuthentication"]="no"
 SETTINGS["PermitEmptyPasswords"]="no"
 SETTINGS["PermitRootLogin"]="no"
-SETTINGS["AllowUsers"]="${1:-rocky}"  # Default to rocky, override with $1
+SETTINGS["AllowUsers"]="%s"
 SETTINGS["MaxAuthTries"]="3"
 SETTINGS["LoginGraceTime"]="60"
 SETTINGS["ClientAliveInterval"]="300"
@@ -54,9 +54,9 @@ SETTINGS["Protocol"]="2"
 SETTINGS["UseDNS"]="no"
 SETTINGS["PrintMotd"]="no"
 SETTINGS["TCPKeepAlive"]="yes"
-SETTINGS["KexAlgorithms"]="curve25519-sha256@libssh.org"
-SETTINGS["Ciphers"]="chacha20-poly1305@openssh.com,aes256-gcm@openssh.com"
-SETTINGS["MACs"]="hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com"
+SETTINGS["KexAlgorithms"]="curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,diffie-hellman-group14-sha256"
+SETTINGS["Ciphers"]="chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr"
+SETTINGS["MACs"]="umac-128-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,umac-128@openssh.com,hmac-sha2-256,hmac-sha2-512"
 
 CONFIG_FILE="/etc/ssh/sshd_config"
 
@@ -80,6 +80,7 @@ done\n' "$USER" > "/var/tmp/sshd_config.sh"
 # Customize image
 echo "Customizing cloud image with virt-customize..."
 virt-customize -a $IMAGE \
+    --uninstall cockpit-bridge,cockpit-system,cockpit-ws \
     --install vim,wget,curl,qemu-guest-agent,microcode_ctl \
     --run-command 'systemctl enable qemu-guest-agent' \
     --timezone "Asia/Seoul" \
@@ -96,6 +97,7 @@ virt-customize -a $IMAGE \
     --run-command 'rm -f /etc/ssh/ssh_host_*' \
     --run-command 'rm -rf /root/.ssh/known_hosts' \
     --run-command 'rm -rf /home/*/.ssh/known_hosts' \
+    --run-command 'rm -f /etc/motd.d/cockpit' \
     --run-command 'history -c && history -w' \
     --selinux-relabel
 
@@ -108,14 +110,14 @@ qemu-img resize $IMAGE $SIZE
 # Create VM
 echo "Creating VM..."
 qm create $TEMPLATE_ID \
---name $TEMPLATE_NAME \
---memory $RAM \
---cores $CORES \
---net0 virtio,bridge=$BRIDGE \
---machine q35 \
---bios ovmf \
---scsihw virtio-scsi-single \
---cpu host
+    --name $TEMPLATE_NAME \
+    --memory $RAM \
+    --cores $CORES \
+    --net0 virtio,bridge=$BRIDGE \
+    --machine q35 \
+    --bios ovmf \
+    --scsihw virtio-scsi-single \
+    --cpu host
 
 # Import image
 echo "Importing image into a storage pool..."
@@ -149,6 +151,9 @@ qm set $TEMPLATE_ID --ciuser=$USER --cipassword="$PASSWORD" --ipconfig0 ip=dhcp
 
 # Create and attach EFI disk
 qm set $TEMPLATE_ID --efidisk0 $STORAGE:1,format=raw,efitype=4m,pre-enrolled-keys=1
+
+# Attach serial port to the VM
+qm set $TEMPLATE_ID -serial0 socket
 
 
 # --- Step 4: Convert the VM to a template and clean up ---

@@ -11,6 +11,8 @@ if [ "$NODE_ID_PREFIX" == "1" ]; then
     qm set 102 --tags "k3s-worker,node01"
     qm set 103 --tags "docker,node01"
 
+    qm set 103 --cores 2 # Special config for Docker VM
+
 elif [ "$NODE_ID_PREFIX" == "2" ]; then
     qm set 201 --name rocky-master02
     qm set 202 --name rocky-worker02
