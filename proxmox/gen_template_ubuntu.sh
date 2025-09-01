@@ -22,7 +22,9 @@ STORAGE=local-zfs
 read -p "User: " USER
 # Cloud Init user password
 read -sp "Password: " PASSWORD
+echo ""
 read -sp "Confirm password: " PASSWORD_CHK
+echo ""
 # SSH Public key
 read -p "Public key: " PUB_KEY
 
@@ -101,8 +103,7 @@ virt-customize -a $IMAGE \
     --run-command 'truncate -s 0 /var/log/lastlog' \
     --run-command 'rm -f /etc/ssh/ssh_host_*' \
     --run-command 'rm -rf /root/.ssh/known_hosts' \
-    --run-command 'rm -rf /home/*/.ssh/known_hosts' \
-    --run-command 'history -c && history -w' \
+    --run-command 'rm -rf /home/*/.ssh/known_hosts'
 
 # Resize image
 echo "Resizing image..."

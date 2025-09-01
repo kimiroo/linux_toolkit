@@ -22,7 +22,9 @@ STORAGE=local-zfs
 read -p "User: " USER
 # Cloud Init user password
 read -sp "Password: " PASSWORD
+echo ""
 read -sp "Confirm password: " PASSWORD_CHK
+echo ""
 # SSH Public key
 read -p "Public key: " PUB_KEY
 
