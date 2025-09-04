@@ -40,7 +40,8 @@ echo "Downloading cloud image..."
 wget $IMAGE_URL -O $IMAGE
 
 echo "Generating cloud-init APT source snippet..."
-printf 'apt:
+printf '#cloud-config
+apt:
   sources:
     primary:
       - arches: [amd64]
