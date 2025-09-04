@@ -88,12 +88,15 @@ done\n' "$USER" > "/var/tmp/sshd_config.sh"
 # Customize image
 echo "Customizing cloud image with virt-customize..."
 virt-customize -a $IMAGE \
-    --install vim,wget,curl,qemu-guest-agent,intel-microcode \
+    --install vim,wget,curl,qemu-guest-agent,intel-microcode,chrony \
     --run-command 'systemctl enable qemu-guest-agent' \
     --timezone "Asia/Seoul" \
     --upload /var/tmp/sshd_config.sh:/var/tmp/sshd_config.sh \
     --run-command 'bash /var/tmp/sshd_config.sh' \
     --run-command 'rm -f /var/tmp/sshd_config.sh' \
+    --run-command "sed -i 's/-p -- \\\\u/-- \\\\u/' /etc/systemd/system/getty@ttyS0.service" \
+    --run-command 'timedatectl set-ntp no' \
+    --run-command "sed -i.ori '/pool ntp.ubuntu.com/i\server time.kriss.re.kr iburst\nserver time2.kriss.re.kr iburst\n' /etc/chrony/chrony.conf" \
     --run-command 'cloud-init clean' \
     --run-command 'truncate -s 0 /etc/machine-id' \
     --run-command 'rm -rf /var/lib/cloud/instances/*' \
