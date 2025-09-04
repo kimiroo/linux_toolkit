@@ -88,7 +88,6 @@ done\n' "$USER" > "/var/tmp/sshd_config.sh"
 # Customize image
 echo "Customizing cloud image with virt-customize..."
 virt-customize -a $IMAGE \
-    --no-random \
     --install vim,wget,curl,qemu-guest-agent,intel-microcode,chrony \
     --run-command 'systemctl enable qemu-guest-agent' \
     --timezone "Asia/Seoul" \
