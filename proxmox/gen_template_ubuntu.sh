@@ -94,11 +94,10 @@ virt-customize -a $IMAGE \
     --run-command 'systemctl enable qemu-guest-agent' \
     --run-command 'bash /var/tmp/sshd_config.sh' \
     --run-command 'rm -f /var/tmp/sshd_config.sh' \
-    --run-command 'timedatectl set-ntp no' \
     --run-command "sed -i.ori '/pool ntp.ubuntu.com/i\server time.kriss.re.kr iburst\nserver time2.kriss.re.kr iburst\n' /etc/chrony/chrony.conf" \
-    --firstboot-command 'timedatectl set-ntp no' \
     --run-command "mkdir -p /etc/systemd/system/getty@ttyS0.service.d" \
     --run-command "printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '\''-- \\\\u'\'' --keep-baud 115200,57600,38400,9600 - \${TERM}\n' | sudo tee /etc/systemd/system/getty@ttyS0.service.d/override.conf" \
+    --run-command "sudo sed -i 's#http://\(archive\|security\)\.ubuntu\.com#https://mirror.kakao.com#g' /etc/apt/sources.list.d/ubuntu.sources" \
     --run-command 'cloud-init clean' \
     --run-command 'truncate -s 0 /etc/machine-id' \
     --run-command 'rm -rf /var/lib/cloud/instances/*' \
@@ -108,7 +107,10 @@ virt-customize -a $IMAGE \
     --run-command 'truncate -s 0 /var/log/lastlog' \
     --run-command 'rm -f /etc/ssh/ssh_host_*' \
     --run-command 'rm -rf /root/.ssh/known_hosts' \
-    --run-command 'rm -rf /home/*/.ssh/known_hosts'
+    --run-command 'rm -rf /home/*/.ssh/known_hosts' \
+    --firstboot-command 'timedatectl set-ntp no' \
+    --firstboot-command 'systemctl enable chrony' \
+    --firstboot-command 'systemctl start chrony'
 
 # Resize image
 echo "Resizing image..."
