@@ -88,15 +88,17 @@ done\n' "$USER" > "/var/tmp/sshd_config.sh"
 # Customize image
 echo "Customizing cloud image with virt-customize..."
 virt-customize -a $IMAGE \
+    --no-random \
     --install vim,wget,curl,qemu-guest-agent,intel-microcode,chrony \
     --run-command 'systemctl enable qemu-guest-agent' \
     --timezone "Asia/Seoul" \
     --upload /var/tmp/sshd_config.sh:/var/tmp/sshd_config.sh \
     --run-command 'bash /var/tmp/sshd_config.sh' \
     --run-command 'rm -f /var/tmp/sshd_config.sh' \
-    --run-command "sed -i 's/-p -- \\\\u/-- \\\\u/' /etc/systemd/system/getty@ttyS0.service" \
     --run-command 'timedatectl set-ntp no' \
     --run-command "sed -i.ori '/pool ntp.ubuntu.com/i\server time.kriss.re.kr iburst\nserver time2.kriss.re.kr iburst\n' /etc/chrony/chrony.conf" \
+    --run-command "mkdir -p /etc/systemd/system/getty@ttyS0.service.d" \
+    --run-command "printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '\''-- \\\\u'\'' --keep-baud 115200,57600,38400,9600 - \${TERM}\n' | sudo tee /etc/systemd/system/getty@ttyS0.service.d/override.conf" \
     --run-command 'cloud-init clean' \
     --run-command 'truncate -s 0 /etc/machine-id' \
     --run-command 'rm -rf /var/lib/cloud/instances/*' \
