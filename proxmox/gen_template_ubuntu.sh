@@ -39,17 +39,6 @@ fi
 echo "Downloading cloud image..."
 wget $IMAGE_URL -O $IMAGE
 
-echo "Generating cloud-init APT source snippet..."
-printf '#cloud-config
-apt:
-  sources:
-    primary:
-      - arches: [amd64]
-        uri: https://mirror.kakao.com/ubuntu
-    security:
-      - arches: [amd64]
-        uri: https://mirror.kakao.com/ubuntu' > "/var/lib/vz/snippets/apt-sources.yaml"
-
 # Generate script file to harden sshd_config
 echo "Generating temporary sshd configuration script..."
 printf '#!/bin/bash
@@ -120,7 +109,8 @@ virt-customize -a $IMAGE \
     --run-command 'rm -rf /home/*/.ssh/known_hosts' \
     --firstboot-command 'timedatectl set-ntp no' \
     --firstboot-command 'systemctl enable chrony' \
-    --firstboot-command 'systemctl start chrony'
+    --firstboot-command 'systemctl start chrony' \
+    --firstboot-command "sudo sed -i 's#http://\(archive\|security\)\.ubuntu\.com#https://mirror.kakao.com#g' /etc/apt/sources.list.d/ubuntu.sources"
 
 # Resize image
 echo "Resizing image..."
@@ -175,9 +165,6 @@ qm set $TEMPLATE_ID --efidisk0 $STORAGE:1,format=raw,efitype=4m,pre-enrolled-key
 
 # Attach serial port to the VM
 qm set $TEMPLATE_ID -serial0 socket
-
-# Set cloud-init config
-qm set $TEMPLATE_ID --cicustom "user=local:snippets/apt-sources.yaml"
 
 
 # --- Step 4: Convert the VM to a template and clean up ---
