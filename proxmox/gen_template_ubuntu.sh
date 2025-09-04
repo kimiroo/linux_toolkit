@@ -39,6 +39,16 @@ fi
 echo "Downloading cloud image..."
 wget $IMAGE_URL -O $IMAGE
 
+echo "Generating cloud-init APT source snippet..."
+printf 'apt:
+  sources:
+    primary:
+      - arches: [amd64]
+        uri: https://mirror.kakao.com/ubuntu
+    security:
+      - arches: [amd64]
+        uri: https://mirror.kakao.com/ubuntu' > "/var/lib/vz/snippets/apt-sources.yaml"
+
 # Generate script file to harden sshd_config
 echo "Generating temporary sshd configuration script..."
 printf '#!/bin/bash
@@ -95,10 +105,8 @@ virt-customize -a $IMAGE \
     --run-command 'bash /var/tmp/sshd_config.sh' \
     --run-command 'rm -f /var/tmp/sshd_config.sh' \
     --run-command "sed -i.ori '/pool ntp.ubuntu.com/i\server time.kriss.re.kr iburst\nserver time2.kriss.re.kr iburst\n' /etc/chrony/chrony.conf" \
-    --run-command 'systemctl enable chrony' \
     --run-command "mkdir -p /etc/systemd/system/getty@ttyS0.service.d" \
     --run-command "printf '[Service]\nExecStart=\nExecStart=-/sbin/agetty -o '\''-- \\\\u'\'' --keep-baud 115200,57600,38400,9600 - \${TERM}\n' | sudo tee /etc/systemd/system/getty@ttyS0.service.d/override.conf" \
-    --run-command "sudo sed -i 's#http://\(archive\|security\)\.ubuntu\.com#https://mirror.kakao.com#g' /etc/apt/sources.list.d/ubuntu.sources" \
     --run-command 'cloud-init clean' \
     --run-command 'truncate -s 0 /etc/machine-id' \
     --run-command 'rm -rf /var/lib/cloud/instances/*' \
@@ -109,7 +117,9 @@ virt-customize -a $IMAGE \
     --run-command 'rm -f /etc/ssh/ssh_host_*' \
     --run-command 'rm -rf /root/.ssh/known_hosts' \
     --run-command 'rm -rf /home/*/.ssh/known_hosts' \
-    --firstboot-command 'timedatectl set-ntp no'
+    --firstboot-command 'timedatectl set-ntp no' \
+    --firstboot-command 'systemctl enable chrony' \
+    --firstboot-command 'systemctl start chrony'
 
 # Resize image
 echo "Resizing image..."
@@ -164,6 +174,9 @@ qm set $TEMPLATE_ID --efidisk0 $STORAGE:1,format=raw,efitype=4m,pre-enrolled-key
 
 # Attach serial port to the VM
 qm set $TEMPLATE_ID -serial0 socket
+
+# Set cloud-init config
+qm set $TEMPLATE_ID --cicustom "user=local:snippets/apt-sources.yaml"
 
 
 # --- Step 4: Convert the VM to a template and clean up ---
