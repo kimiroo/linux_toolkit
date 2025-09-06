@@ -15,7 +15,7 @@ elif [ "$NODE_ID_PREFIX" == "2" ]; then
 elif [ "$NODE_ID_PREFIX" == "3" ]; then
     qm set 301 --name ubuntu-master-03 --tags "k3s-master,node-03"
     qm set 302 --name ubuntu-worker-05 --tags "k3s-worker,node-03"
-    qm set 303 --name ubuntu-podman-01 --tags "podman,node-03" --cores 2 # Special config for Podman VM
+    qm set 303 --name ubuntu-docker-01 --tags "docker,node-03" --cores 2 # Special config for Docker VM
 fi
 
 for vm_idx in 1 2 3
