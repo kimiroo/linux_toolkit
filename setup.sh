@@ -64,7 +64,7 @@ sudo chmod 644 "$LISTFILE_KUBERNETES"
 echo "[INFO] Setting up Helm repository..."
 echo \
     "deb [arch=$ARCH signed-by=$KEYRING_HELM] https://packages.buildkite.com/helm-linux/helm-debian/any/ \
-    all main" | \
+    any main" | \
     sudo tee "$LISTFILE_HELM" > /dev/null
 sudo chmod 644 "$LISTFILE_HELM"
 echo
