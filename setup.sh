@@ -38,7 +38,7 @@ curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | sudo gpg --
 sudo chmod 644 "$KEYRING_KUBERNETES"
 
 echo "[INFO] Setting up Helm keyrings..."
-curl -fsSL https://baltocdn.com/helm/signing.asc | sudo gpg --dearmor -o "$KEYRING_HELM"
+curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | sudo gpg --dearmor -o "$KEYRING_HELM"
 sudo chmod 644 "$KEYRING_HELM"
 echo
 
@@ -63,7 +63,7 @@ sudo chmod 644 "$LISTFILE_KUBERNETES"
 # Ubuntu & Debian
 echo "[INFO] Setting up Helm repository..."
 echo \
-    "deb [arch=$ARCH signed-by=$KEYRING_HELM] https://baltocdn.com/helm/stable/debian/ \
+    "deb [arch=$ARCH signed-by=$KEYRING_HELM] https://packages.buildkite.com/helm-linux/helm-debian/any/ \
     all main" | \
     sudo tee "$LISTFILE_HELM" > /dev/null
 sudo chmod 644 "$LISTFILE_HELM"
