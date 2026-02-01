@@ -6,7 +6,7 @@ STORAGE="nvme-zfs"
 CPUS=1
 CORES=1
 RAM=4096
-GATEWAY="10.5.37.254"
+GATEWAY="10.5.0.254"
 
 declare -a RAM_SIZES=(2048 4096 4096) #master, worker, worker or docker
 

@@ -7,7 +7,7 @@ IMAGE="/var/tmp/Rocky-GenericCloud-Base.qcow2"
 # Template ID
 read -p "Template ID: " TEMPLATE_ID
 # Template name
-TEMPLATE_NAME=Rocky-10.0-Template
+TEMPLATE_NAME=Rocky-10-Template
 # Disk size
 SIZE=20G
 # Network bridge
