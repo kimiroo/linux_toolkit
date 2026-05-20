@@ -95,6 +95,8 @@ virt-customize -a $IMAGE \
     --upload /var/tmp/sshd_config.sh:/var/tmp/sshd_config.sh \
     --run-command 'bash /var/tmp/sshd_config.sh' \
     --run-command 'rm -f /var/tmp/sshd_config.sh' \
+    --run-command 'dnf config-manager --setopt fastestmirror=1 --save' \
+    --run-command 'sed -i "/^mirrorlist=/s/\$/\&country=KR/" /etc/yum.repos.d/*.repo' \
     --run-command 'cloud-init clean' \
     --run-command 'truncate -s 0 /etc/machine-id' \
     --run-command 'rm -rf /var/lib/cloud/instances/*' \
