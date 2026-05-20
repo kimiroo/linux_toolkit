@@ -3,7 +3,6 @@
 read -p "Template ID: " TEMPLATE_ID
 read -p "Node ID: " NODE_ID_PREFIX
 STORAGE="nvme-zfs"
-CPUS=1
 CORES=1
 RAM=4096
 GATEWAY="10.5.0.254"
@@ -25,10 +24,8 @@ do
     qm clone $TEMPLATE_ID $VM_ID --full --storage $STORAGE --name $VM_NAME --format raw
 
     echo "Configuring VM..."
-    qm set $VM_ID --vcpus $CPUS --cores $CORES
-    qm set $VM_ID --memory $RAM
-    qm set $VM_ID --ipconfig0 ip=$VM_IP,gw=$GATEWAY
-    qm set $VM_ID --onboot 1
+    qm set $VM_ID --cores $CORES --memory $RAM
+    qm set $VM_ID --ipconfig0 ip=$VM_IP,gw=$GATEWAY --onboot 1
 done
 
 echo "Done."
