@@ -9,11 +9,11 @@ read -p "Template ID: " TEMPLATE_ID
 # Template name
 TEMPLATE_NAME=Rocky-10-Template
 # Disk size
-SIZE=20G
+SIZE=40G
 # Network bridge
 BRIDGE=vmbr0
 # RAM
-RAM=2048
+RAM=4096
 # CPU cores
 CORES=1
 # Storage pool
