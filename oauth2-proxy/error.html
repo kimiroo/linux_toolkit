@@ -1,0 +1,116 @@
+{{define "error.html"}}
+<!DOCTYPE html>
+<html lang="en" charset="utf-8">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>{{.StatusCode}} {{.Title}}</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha256-2FMn2Zx6PuH5tdBQDRNwrOo60ts5wWPC9R8jK67b3t4=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha256-pdY4ejLKO67E0CM2tbPtq1DJ3VGDVVdqAR6j3ZwdiE4=" crossorigin="anonymous">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/spoqa-han-sans@3.3.0/css/SpoqaHanSansNeo.min.css">
+
+    <!-- Custom Styles -->
+    <style>
+        html, body {
+            height: 100%;
+            font-family: "Spoqa Han Sans Neo", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", sans-serif;
+        }
+        .modal-dialog.login-box { max-width: 400px !important; }
+        .modal-dialog.error-box { max-width: 500px !important; }
+        .logo-wrapper img {
+            width: 150px; height: 150px;
+            border-radius: 50%; display: block;
+            margin: 0 auto; object-fit: cover;
+            box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+        }
+        .status-code {
+            font-size: 7rem; font-weight: 700;
+            line-height: 1.2;
+        }
+        .footer-custom { margin-top: 2rem; font-size: 0.875rem; }
+    </style>
+</head>
+<body class="bg-body-secondary">
+    <!-- Main wrapper -->
+    <div class="container d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+        <div class="modal-dialog error-box w-100 m-0">
+            <div class="modal-content rounded-4 shadow border-0 bg-body">
+                <div class="modal-body p-5 text-center">
+
+                    <!-- Error Header -->
+                    <div class="status-code text-danger mb-2">{{.StatusCode}}</div>
+                    <h3 class="fw-bold mb-4">{{.Title}}</h3>
+
+                    <!-- Additional Info Toggle -->
+                    {{ if or .Message .RequestID }}
+                    <div class="card border border-light-subtle shadow-sm mb-4 text-start">
+                        <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center" style="cursor:pointer;" data-bs-toggle="collapse" data-bs-target="#moreInfo" aria-expanded="false" aria-controls="moreInfo">
+                            <span class="fw-semibold">More Info</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="collapse" id="moreInfo">
+                            <div class="card-body pt-0 text-secondary">
+                                {{ if .Message }}
+                                <p class="mb-2">{{.Message}}</p>
+                                {{ end }}
+                                {{ if .RequestID }}
+                                <p class="mb-0">Request ID: <span class="font-monospace text-dark">{{.RequestID}}</span></p>
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
+
+                    <!-- Action Buttons -->
+                    {{ if .Redirect }}
+                    <hr class="my-4">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <form method="GET" action="{{.Redirect}}">
+                                <button type="submit" class="btn btn-outline-secondary w-100 rounded-3 py-2">Go back</button>
+                            </form>
+                        </div>
+                        <div class="col-sm-6">
+                            <form method="GET" action="{{.ProxyPrefix}}/sign_in">
+                                <input type="hidden" name="rd" value="{{.Redirect}}">
+                                <button type="submit" class="btn btn-secondary w-100 rounded-3 py-2">Sign in</button>
+                            </form>
+                        </div>
+                    </div>
+                    {{ end }}
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer-custom text-secondary text-center mt-4">
+            {{ if eq .Footer "-" }}
+            {{ else if eq .Footer ""}}
+            <!-- Default footer text has been removed -->
+            {{ else }}
+            <p>{{.Footer}}</p>
+            {{ end }}
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha256-ew8UiV1pJH/YjpOEBInP1HxVvT/SfrCmwSoUzF9JIgc=" crossorigin="anonymous"></script>
+
+    <script>
+        // Handle color theme
+        const updateColorTheme = () => document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+        updateColorTheme();
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            updateColorTheme();
+        })
+    </script>
+</body>
+</html>
+{{end}}

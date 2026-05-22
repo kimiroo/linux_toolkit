@@ -1,0 +1,136 @@
+{{define "sign_in.html"}}
+<!DOCTYPE html>
+<html lang="en" charset="utf-8">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Sign In</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha256-2FMn2Zx6PuH5tdBQDRNwrOo60ts5wWPC9R8jK67b3t4=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" integrity="sha256-pdY4ejLKO67E0CM2tbPtq1DJ3VGDVVdqAR6j3ZwdiE4=" crossorigin="anonymous">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/spoqa-han-sans@3.3.0/css/SpoqaHanSansNeo.min.css">
+
+    <!-- Custom Styles -->
+    <style>
+        html, body {
+            height: 100%;
+            font-family: "Spoqa Han Sans Neo", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", sans-serif;
+        }
+        .modal-dialog.login-box { max-width: 400px !important; }
+        .modal-dialog.error-box { max-width: 500px !important; }
+        .logo-wrapper img {
+            width: 150px; height: 150px;
+            border-radius: 50%; display: block;
+            margin: 0 auto; object-fit: cover;
+            box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+        }
+        .status-code {
+            font-size: 7rem; font-weight: 700;
+            line-height: 1.2;
+        }
+        .footer-custom { margin-top: 2rem; font-size: 0.875rem; }
+    </style>
+</head>
+<body class="bg-body-secondary">
+    <!-- Main wrapper -->
+    <div class="container d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+        <div class="modal-dialog login-box w-100 m-0">
+            <div class="modal-content rounded-4 shadow border-0 bg-body">
+                <div class="modal-body p-5">
+
+                    <!-- Logo section with dummy base64 image -->
+                    {{ if .LogoData }}
+                    <div class="mb-4 text-center logo-wrapper">
+                        {{.LogoData}}
+                    </div>
+                    {{ end }}
+
+                    <h2 class="fw-bold text-center mb-4">Sign In</h2>
+
+                    <!-- OAuth Provider Sign In -->
+                    <form method="GET" action="{{.ProxyPrefix}}/start" class="text-center">
+                        <input type="hidden" name="rd" value="{{.Redirect}}">
+                        {{ if .SignInMessage }}
+                        <p class="mb-3 text-muted">{{.SignInMessage}}</p>
+                        {{ end}}
+                        <button type="submit" class="btn btn-secondary w-100 rounded-3 py-2">Sign in with {{.ProviderName}}</button>
+                    </form>
+
+                    <!-- Custom Login Form -->
+                    {{ if .CustomLogin }}
+                    <hr class="my-4">
+                    <form method="POST" action="{{.ProxyPrefix}}/sign_in">
+                        <input type="hidden" name="rd" value="{{.Redirect}}">
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-semibold" for="username">Username</label>
+                            <input class="form-control rounded-3" type="text" placeholder="e.g. userx@example.com" name="username" id="username">
+                        </div>
+                        <div class="mb-4 text-start">
+                            <label class="form-label fw-semibold" for="password">Password</label>
+                            <input class="form-control rounded-3" type="password" placeholder="********" name="password" id="password">
+                        </div>
+                        <button class="btn btn-dark w-100 rounded-3 py-2">Sign in</button>
+                    </form>
+                    {{ end }}
+
+                    <!-- Error alerts -->
+                    {{ if eq .StatusCode 400 401 }}
+                    <div class="alert alert-danger alert-dismissible fade show mt-4 mb-0" role="alert">
+                        {{ if eq .StatusCode 400 }}
+                        <strong>{{.StatusCode}}</strong> Username cannot be empty
+                        {{ else }}
+                        <strong>{{.StatusCode}}</strong> Invalid Username or Password
+                        {{ end }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {{ end }}
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer-custom text-secondary text-center mt-4">
+            {{ if eq .Footer "-" }}
+            {{ else if eq .Footer ""}}
+            <!-- Default footer text has been removed -->
+            {{ else }}
+            <p>{{.Footer}}</p>
+            {{ end }}
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha256-ew8UiV1pJH/YjpOEBInP1HxVvT/SfrCmwSoUzF9JIgc=" crossorigin="anonymous"></script>
+
+    <script>
+        // Handle color theme
+        const updateColorTheme = () => document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+        updateColorTheme();
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            updateColorTheme();
+        })
+
+        // Handle URL hash fragments
+        if (window.location.hash) {
+            (function() {
+                var inputs = document.getElementsByName('rd');
+                for (var i = 0; i < inputs.length; i++) {
+                    // Remove existing hash from URL but make sure it is only added once
+                    var idx = inputs[i].value.indexOf('#');
+                    if (idx >= 0) {
+                        inputs[i].value = inputs[i].value.substr(0, idx);
+                    }
+                    inputs[i].value += window.location.hash;
+                }
+            })();
+        }
+    </script>
+</body>
+</html>
+{{end}}
