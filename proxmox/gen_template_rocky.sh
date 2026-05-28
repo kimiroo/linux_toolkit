@@ -85,11 +85,23 @@ for setting in "${!SETTINGS[@]}"; do
     fi
 done\n' "$USER" > "/var/tmp/sshd_config.sh"
 
+echo "Generating temporary chrony.conf..."
+cat << 'EOF' > /var/tmp/chrony.conf
+server ntp.kriss.re.kr iburst prefer
+pool kr.pool.ntp.org iburst
+driftfile /var/lib/chrony/drift
+makestep 1.0 3
+rtcsync
+logdir /var/log/chrony
+EOF
+
 # Customize image
 echo "Customizing cloud image with virt-customize..."
 virt-customize -a $IMAGE \
     --uninstall cockpit-bridge,cockpit-system,cockpit-ws \
-    --install vim,wget,curl,qemu-guest-agent,microcode_ctl \
+    --install vim,wget,curl,qemu-guest-agent,microcode_ctl,chrony \
+    --upload /var/tmp/chrony.conf:/etc/chrony.conf \
+    --run-command 'chown root:root /etc/chrony.conf && chmod 644 /etc/chrony.conf' \
     --run-command 'systemctl enable qemu-guest-agent' \
     --timezone "Asia/Seoul" \
     --upload /var/tmp/sshd_config.sh:/var/tmp/sshd_config.sh \
@@ -175,6 +187,7 @@ qm template $TEMPLATE_ID
 echo "Cleaning up temporary files..."
 rm -f $IMAGE
 rm -f /var/tmp/sshd_config.sh
+rm -f /var/tmp/chrony.conf
 rm -f /var/tmp/pubkey
 
 echo "Script completed successfully."
