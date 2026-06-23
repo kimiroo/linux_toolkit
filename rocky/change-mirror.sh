@@ -5,7 +5,7 @@ BASEURL="https://mirror.navercorp.com/rocky"
 
 # Parse options using getopts
 # e:p: means option -e and -p require an argument
-while getopts "" opt; do
+while getopts "m:b:" opt; do
     case " ${opt} " in
         m) METHOD="$OPTARG" ;;
         b) BASEURL="$OPTARG" ;;
