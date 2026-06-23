@@ -18,12 +18,12 @@ for file in /etc/yum.repos.d/*.repo; do
     # Process the file here
     echo "Processing $file"
 
-    if []; then
+    if [ "$METHOD" == "baseurl" ] || [ "$METHOD" == "b" ]; then
         sed -i.bak 's|mirrorlist|#mirrorlist|g' $file
         sed -i 's|#baseurl|baseurl|g' $file
         sed -i 's|http://dl.rockylinux.org/$contentdir|'"${BASEURL}"'|g' $file
 
-    elif []; then
+    elif [ "$METHOD" == "mirrorlist" ] || [ "$METHOD" == "m" ]; then
         sed -i.bak 's|^#mirrorlist|mirrorlist|g' $file
         sed -i 's|^baseurl|#baseurl|g' $file
         sed -i 's|^mirrorlist.*|&\&country=KR|g' $file
